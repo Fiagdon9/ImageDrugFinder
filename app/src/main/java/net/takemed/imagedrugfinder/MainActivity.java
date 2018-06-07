@@ -1,10 +1,18 @@
 package net.takemed.imagedrugfinder;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.security.ProviderInstaller;
 import com.google.gson.JsonObject;
+
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.net.ssl.SSLContext;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,6 +27,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        try {
+            ProviderInstaller.installIfNeeded(getApplicationContext());
+
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+            sslContext.init(null, null, null);
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException |
+                KeyManagementException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.unsplash.com")
