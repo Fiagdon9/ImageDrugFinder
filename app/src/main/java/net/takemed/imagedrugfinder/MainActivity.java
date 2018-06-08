@@ -7,7 +7,11 @@ import android.util.Log;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
+import net.takemed.imagedrugfinder.data.retrofit.UnsplashApi;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -44,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
         // Log
         Log.d("mlg", "retrofit.baseUrl(): " + String.valueOf(retrofit.baseUrl()));
 
-        APIUnsplash apiUnsplash = retrofit.create(APIUnsplash.class);
-        Call<JsonObject> call = apiUnsplash.loadPhotos();
+        UnsplashApi unsplashApi = retrofit.create(UnsplashApi.class);
+        Call<JsonObject> call = unsplashApi.searchPhotos("11bee5ebf6e392875ecee649ef9f4a6953e3f4bb623112d9bc3fbf4651e277d8", "computer");
         // Log
         Log.d("mlg", "Call<JSONObject> isExecuted(): " + String.valueOf(call.isExecuted()));
         Log.d("mlg", "Call<JSONObject> url: " + String.valueOf(call.request().url()));
@@ -53,8 +57,10 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                Log.d("mlg", "length " + String.valueOf(response.body().size()));
 
+//                JsonArray results = response.body().getAsJsonArray("results");
+
+//                Log.d("mlg", "length " + results.get(0).getAsString());
             }
 
             @Override

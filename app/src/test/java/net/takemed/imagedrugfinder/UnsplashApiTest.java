@@ -11,8 +11,9 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
+import static junit.framework.Assert.fail;
 import static net.takemed.imagedrugfinder.PackageHelper.hasClass;
-import static org.junit.Assert.fail;
+//import static org.junit.Assert.fail;
 
 public class UnsplashApiTest {
 
