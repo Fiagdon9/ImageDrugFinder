@@ -6,13 +6,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.bumptech.glide.Glide;
 
 import net.takemed.imagedrugfinder.data.retrofit.UnsplashApi;
 
@@ -33,6 +32,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     private List<String> imagesUrl = new ArrayList<>();
+    //TODO: инкапсуляция? Что такое инкапсуляция?!
+    //TODO: делай реализацию ТОЛЬКО через список
     ImageView image0;
 //            image1, image2, image3, image4, image5;
     List<ImageView> myImages = new ArrayList<>();
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //TODO: RTL не нужен здесь
         myImages.add(image0 = findViewById(R.id.image0));
 //        myImages.add(image1 = findViewById(R.id.image1));
 //        myImages.add(image2 = findViewById(R.id.image2));
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
 //        myImages.add(image4 = findViewById(R.id.image4));
 //        myImages.add(image5 = findViewById(R.id.image5));
 
+        //--
+        //TODO: вынеси в отдельную ф-цию и оберни условием, что Android API <= 19
         try {
             ProviderInstaller.installIfNeeded(getApplicationContext());
 
@@ -58,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 KeyManagementException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+        //--
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.unsplash.com")
