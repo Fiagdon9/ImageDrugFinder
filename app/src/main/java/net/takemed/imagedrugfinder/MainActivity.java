@@ -3,6 +3,8 @@ package net.takemed.imagedrugfinder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -10,11 +12,15 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.bumptech.glide.Glide;
 
 import net.takemed.imagedrugfinder.data.retrofit.UnsplashApi;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.net.ssl.SSLContext;
 
@@ -26,10 +32,22 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    private List<String> imagesUrl = new ArrayList<>();
+    ImageView image0;
+//            image1, image2, image3, image4, image5;
+    List<ImageView> myImages = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        myImages.add(image0 = findViewById(R.id.image0));
+//        myImages.add(image1 = findViewById(R.id.image1));
+//        myImages.add(image2 = findViewById(R.id.image2));
+//        myImages.add(image3 = findViewById(R.id.image3));
+//        myImages.add(image4 = findViewById(R.id.image4));
+//        myImages.add(image5 = findViewById(R.id.image5));
 
         try {
             ProviderInstaller.installIfNeeded(getApplicationContext());
@@ -64,7 +82,30 @@ public class MainActivity extends AppCompatActivity {
                 Gson gson = new Gson();
 
                 // get image url
-                Log.d("mlg", "length " + results.getAsJsonObject("urls").get("small"));
+//                Log.d("mlg", "length " + results.getAsJsonObject("urls").get("small"));
+                for (int i=0; i < 6; i++){
+                    imagesUrl.add(response.body()
+                            .getAsJsonArray("results")
+                            .get(i).getAsJsonObject()
+                            .getAsJsonObject("urls").get("small").toString());
+                }
+
+                Iterator imagesIterator = imagesUrl.iterator();
+//                Iterator myImgsIterator = myImages.iterator();
+//                while (imagesIterator.hasNext()){
+//                    Log.d("mlg", "imgUrl: " + imagesIterator.next());
+////                    Glide
+////                            .with(getApplicationContext())
+////                            .load(imagesIterator.next())
+////                            .into((ImageView) myImgsIterator.next());
+////                    ((ImageView) myImgsIterator.next()).setVisibility(View.VISIBLE);
+//                }
+                Glide
+                        .with(getApplicationContext())
+                        .load(imagesIterator.next().toString())
+                        .into(image0);
+                image0.setVisibility(View.VISIBLE);
+
             }
 
             @Override
