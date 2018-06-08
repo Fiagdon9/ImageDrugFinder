@@ -53,14 +53,18 @@ public class MainActivity extends AppCompatActivity {
         // Log
         Log.d("mlg", "Call<JSONObject> isExecuted(): " + String.valueOf(call.isExecuted()));
         Log.d("mlg", "Call<JSONObject> url: " + String.valueOf(call.request().url()));
+//        Log.d("mlg", "Call<JSONObject> url: " + String.valueOf(call.request().header("small")));
+
 
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
 
-//                JsonArray results = response.body().getAsJsonArray("results");
+                JsonObject results = response.body().getAsJsonArray("results").get(0).getAsJsonObject();
+                Gson gson = new Gson();
 
-//                Log.d("mlg", "length " + results.get(0).getAsString());
+                // get image url
+                Log.d("mlg", "length " + results.getAsJsonObject("urls").get("small"));
             }
 
             @Override
