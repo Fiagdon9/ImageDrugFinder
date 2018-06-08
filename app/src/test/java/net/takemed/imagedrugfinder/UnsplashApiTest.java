@@ -65,25 +65,17 @@ public class UnsplashApiTest {
             fail("\"searchPhotos\" method must declare two parameters!");
         }
 
-        if(!parameters[0].getName().equals("clientId")) {
-            fail("\"searchPhotos\" method must declare first parameters as \"clientId\"!");
-        }
-
-        if(!parameters[1].getName().equals("query")) {
-            fail("\"searchPhotos\" method must declare second parameters as \"query\"!");
-        }
-
         Annotation[] annotations = parameters[0].getAnnotations();
         if(annotations.length != 1) {
             fail("\"searchPhotos\" method must declare first parameters with only one annotation!");
         }
 
-        if(annotations[0].getClass() != Query.class) {
+        if(!(annotations[0] instanceof Query)) {
             fail("\"searchPhotos\" method must declare first parameters with @Query annotation!");
         }
 
         if(!((Query) annotations[0]).value().equals("client_id")) {
-            fail("\"searchPhotos\" method must declare first parameters with @Query annotation that contain \"clientId\" value!");
+            fail("\"searchPhotos\" method must declare first parameters with @Query annotation that contain \"client_id\" value!");
         }
 
         annotations = parameters[1].getAnnotations();
@@ -91,7 +83,7 @@ public class UnsplashApiTest {
             fail("\"searchPhotos\" method must declare second parameters with only one annotation!");
         }
 
-        if(annotations[0].getClass() != Query.class) {
+        if(!(annotations[0] instanceof Query)) {
             fail("\"searchPhotos\" method must declare second parameters with @Query annotation!");
         }
 
