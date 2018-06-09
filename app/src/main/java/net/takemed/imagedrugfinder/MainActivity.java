@@ -44,12 +44,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //TODO: RTL не нужен здесь
-        myImages.add(image0 = findViewById(R.id.image0));
+//        myImages.add(image0 = findViewById(R.id.image0));
 //        myImages.add(image1 = findViewById(R.id.image1));
 //        myImages.add(image2 = findViewById(R.id.image2));
 //        myImages.add(image3 = findViewById(R.id.image3));
 //        myImages.add(image4 = findViewById(R.id.image4));
 //        myImages.add(image5 = findViewById(R.id.image5));
+        image0 = findViewById(R.id.image0);
 
         //--
         //TODO: вынеси в отдельную ф-цию и оберни условием, что Android API <= 19
@@ -105,11 +106,19 @@ public class MainActivity extends AppCompatActivity {
 ////                            .into((ImageView) myImgsIterator.next());
 ////                    ((ImageView) myImgsIterator.next()).setVisibility(View.VISIBLE);
 //                }
+//                String url = imagesIterator.next().toString();
+                String url = ""+ response.body()
+                        .getAsJsonArray("results")
+                        .get(0).getAsJsonObject()
+                        .getAsJsonObject("urls").get("small").toString();
+                Log.d("mlg", url);
+
                 Glide
-                        .with(getApplicationContext())
-                        .load(imagesIterator.next().toString())
+                        .with(MainActivity.this)
+                        .load(url)
+                        .centerCrop()
                         .into(image0);
-                image0.setVisibility(View.VISIBLE);
+//                image0.setVisibility(View.VISIBLE);
 
             }
 
