@@ -3,6 +3,7 @@ package net.takemed.imagedrugfinder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -31,6 +32,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     public static final int CELLS_COUNT = 6;
+
     private List<String> imagesUrl = new ArrayList<>();
     //TODO: инкапсуляция? Что такое инкапсуляция?!
     //TODO: делай реализацию ТОЛЬКО через список
@@ -44,12 +46,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //TODO: RTL не нужен здесь
-        myImages.add(image0 = findViewById(R.id.image0));
+//        myImages.add(image0 = findViewById(R.id.image0));
 //        myImages.add(image1 = findViewById(R.id.image1));
 //        myImages.add(image2 = findViewById(R.id.image2));
 //        myImages.add(image3 = findViewById(R.id.image3));
 //        myImages.add(image4 = findViewById(R.id.image4));
 //        myImages.add(image5 = findViewById(R.id.image5));
+        image0 = findViewById(R.id.image0);
 
         //--
         //TODO: вынеси в отдельную ф-цию и оберни условием, что Android API <= 19
