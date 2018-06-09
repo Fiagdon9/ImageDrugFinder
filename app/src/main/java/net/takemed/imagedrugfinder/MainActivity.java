@@ -3,14 +3,13 @@ package net.takemed.imagedrugfinder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
-import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import net.takemed.imagedrugfinder.data.retrofit.UnsplashApi;
@@ -31,6 +30,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int CELLS_COUNT = 6;
     private List<String> imagesUrl = new ArrayList<>();
     //TODO: инкапсуляция? Что такое инкапсуляция?!
     //TODO: делай реализацию ТОЛЬКО через список
@@ -83,16 +83,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
 
-                JsonObject results = response.body().getAsJsonArray("results").get(0).getAsJsonObject();
-                Gson gson = new Gson();
+                JsonArray results = response.body()
+                        .getAsJsonArray("results");
 
                 // get image url
 //                Log.d("mlg", "length " + results.getAsJsonObject("urls").get("small"));
-                for (int i=0; i < 6; i++){
-                    imagesUrl.add(response.body()
-                            .getAsJsonArray("results")
+                for (int i = 0; i < CELLS_COUNT; i++) {
+                    String url = takeUrl(results
                             .get(i).getAsJsonObject()
-                            .getAsJsonObject("urls").get("small").toString());
+                            .getAsJsonObject("urls"));
+
+                    imagesUrl.add(url);
                 }
 
                 Iterator imagesIterator = imagesUrl.iterator();
@@ -105,12 +106,7 @@ public class MainActivity extends AppCompatActivity {
 ////                            .into((ImageView) myImgsIterator.next());
 ////                    ((ImageView) myImgsIterator.next()).setVisibility(View.VISIBLE);
 //                }
-                Glide
-                        .with(getApplicationContext())
-                        .load(imagesIterator.next().toString())
-                        .into(image0);
-                image0.setVisibility(View.VISIBLE);
-
+                setImage(image0, imagesIterator.next().toString());
             }
 
             @Override
@@ -118,5 +114,16 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("mlg", "onFailure() " + t);
             }
         });
+    }
+
+    static String takeUrl(JsonObject urls) {
+        return urls.get("small").toString();
+    }
+
+    private void setImage(ImageView iv, String url) {
+        Glide
+                .with(getApplicationContext())
+                .load(url)
+                .into(iv);
     }
 }
