@@ -52,8 +52,10 @@ public class MainActivity extends AppCompatActivity {
             makeSslGreateAgain();
         }
 
+        loadImageFromApi();
+
         findViewById(R.id.btnSearch).setOnClickListener(v -> {
-            loadImageFromApi();
+            showToast("Next pages");
         });
     }
 
