@@ -73,9 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
                         //get image url
                         for (int i = 0; i < CELLS_COUNT; i++) {
-//                            String url  = takeUrl(results
-//                            .get(i).getAsJsonObject()
-//                            .getAsJsonObject("urls"));
 
                                 String url  = takeUrl(results
                                     .get(i).getAsJsonObject()
