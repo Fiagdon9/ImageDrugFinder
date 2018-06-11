@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import retrofit2.http.QueryName;
 
 public interface UnsplashApi {
 
@@ -13,4 +12,5 @@ public interface UnsplashApi {
 
     @GET("/search/photos")
     Call<JsonObject> searchPhotos(@Query("client_id") String clientId, @Query("query") String query);
+
 }
