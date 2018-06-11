@@ -1,10 +1,15 @@
 package net.takemed.imagedrugfinder;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -34,28 +39,111 @@ public class MainActivity extends AppCompatActivity {
     public static final int CELLS_COUNT = 6;
 
     private List<String> imagesUrl = new ArrayList<>();
-    //TODO: инкапсуляция? Что такое инкапсуляция?!
-    //TODO: делай реализацию ТОЛЬКО через список
-    ImageView image0;
-//            image1, image2, image3, image4, image5;
-    List<ImageView> myImages = new ArrayList<>();
+    private List<ImageView> cellsIvs = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initIvsList();
 
-        //TODO: RTL не нужен здесь
-//        myImages.add(image0 = findViewById(R.id.image0));
-//        myImages.add(image1 = findViewById(R.id.image1));
-//        myImages.add(image2 = findViewById(R.id.image2));
-//        myImages.add(image3 = findViewById(R.id.image3));
-//        myImages.add(image4 = findViewById(R.id.image4));
-//        myImages.add(image5 = findViewById(R.id.image5));
-        image0 = findViewById(R.id.image0);
+        //bug in SDK 19 or less with using TLS 1.2
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            makeSslGreateAgain();
+        }
 
-        //--
-        //TODO: вынеси в отдельную ф-цию и оберни условием, что Android API <= 19
+        findViewById(R.id.btnSearch).setOnClickListener(v -> {
+            loadImageFromApi();
+        });
+    }
+
+    private void loadImageFromApi(){
+        String clientId = getString(R.string.client_id);
+        UnsplashApi unsplashApi = new Retrofit.Builder()
+                .baseUrl(UnsplashApi.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(UnsplashApi.class);
+        unsplashApi.searchPhotos(clientId, "computer")
+                .enqueue(new Callback<JsonObject>() {
+                    @Override
+                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                        JsonArray results = response.body()
+                                .getAsJsonArray("results");
+
+                        //get image url
+                        for (int i = 0; i < CELLS_COUNT; i++) {
+//                            String url  = takeUrl(results
+//                            .get(i).getAsJsonObject()
+//                            .getAsJsonObject("urls"));
+
+                                String url  = takeUrl(results
+                                    .get(i).getAsJsonObject()
+                                    .getAsJsonObject("urls"));
+
+                            imagesUrl.add(url);
+                        }
+
+                        if (cellsIvs.size() <= imagesUrl.size()) {
+                            for (int i = 0;  i < cellsIvs.size(); i++) {
+                                setImage(cellsIvs.get(i), imagesUrl.get(i));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<JsonObject> call, Throwable t) {
+                        showToast(R.string.have_not_enough_image_views);
+                    }
+                });
+    }
+
+    static String takeUrl(JsonObject urls) {
+        return urls.get("small").getAsString();
+    }
+
+    private void setImage(ImageView iv, String url) {
+        Glide
+                .with(getApplicationContext())
+                .load(url)
+                .into(iv);
+        iv.setVisibility(View.VISIBLE);
+    }
+
+    public void showToast(String text) {
+        Toast.makeText(this,
+                text, Toast.LENGTH_SHORT).show();
+    }
+
+    public void showToast(@StringRes int id) {
+        Toast.makeText(this,
+                getString(id), Toast.LENGTH_SHORT).show();
+    }
+
+    private void initIvsList() {
+        TableLayout tl = findViewById(R.id.tlImages);
+
+        for (int i = 0; i < tl.getChildCount(); i++) {
+            View child = tl.getChildAt(i);
+
+            if (child instanceof ImageView) {
+                cellsIvs.add((ImageView) child);
+            }
+            else if (child instanceof TableRow) {
+                TableRow row = (TableRow) child;
+
+                for (int j = 0; j < row.getChildCount(); j++) {
+                    child = row.getChildAt(j);
+
+                    if (child instanceof ImageView) {
+                        cellsIvs.add((ImageView) child);
+                    }
+                }
+            }
+        }
+    }
+
+    private void makeSslGreateAgain() {
         try {
             ProviderInstaller.installIfNeeded(getApplicationContext());
 
@@ -65,68 +153,5 @@ public class MainActivity extends AppCompatActivity {
                 KeyManagementException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        //--
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.unsplash.com")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        // Log
-        Log.d("mlg", "retrofit.baseUrl(): " + String.valueOf(retrofit.baseUrl()));
-
-        UnsplashApi unsplashApi = retrofit.create(UnsplashApi.class);
-        Call<JsonObject> call = unsplashApi.searchPhotos("11bee5ebf6e392875ecee649ef9f4a6953e3f4bb623112d9bc3fbf4651e277d8", "computer");
-        // Log
-        Log.d("mlg", "Call<JSONObject> isExecuted(): " + String.valueOf(call.isExecuted()));
-        Log.d("mlg", "Call<JSONObject> url: " + String.valueOf(call.request().url()));
-//        Log.d("mlg", "Call<JSONObject> url: " + String.valueOf(call.request().header("small")));
-
-
-        call.enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-
-                JsonArray results = response.body()
-                        .getAsJsonArray("results");
-
-                // get image url
-//                Log.d("mlg", "length " + results.getAsJsonObject("urls").get("small"));
-                for (int i = 0; i < CELLS_COUNT; i++) {
-                    String url = takeUrl(results
-                            .get(i).getAsJsonObject()
-                            .getAsJsonObject("urls"));
-
-                    imagesUrl.add(url);
-                }
-
-                Iterator imagesIterator = imagesUrl.iterator();
-//                Iterator myImgsIterator = myImages.iterator();
-//                while (imagesIterator.hasNext()){
-//                    Log.d("mlg", "imgUrl: " + imagesIterator.next());
-////                    Glide
-////                            .with(getApplicationContext())
-////                            .load(imagesIterator.next())
-////                            .into((ImageView) myImgsIterator.next());
-////                    ((ImageView) myImgsIterator.next()).setVisibility(View.VISIBLE);
-//                }
-                setImage(image0, imagesIterator.next().toString());
-            }
-
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                Log.d("mlg", "onFailure() " + t);
-            }
-        });
-    }
-
-    static String takeUrl(JsonObject urls) {
-        return urls.get("small").toString();
-    }
-
-    private void setImage(ImageView iv, String url) {
-        Glide
-                .with(getApplicationContext())
-                .load(url)
-                .into(iv);
     }
 }

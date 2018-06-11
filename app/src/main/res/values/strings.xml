@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ImageDrugFinder</string>
+    <string name="have_not_enough_image_views">Have not enough image views</string>
 </resources>
