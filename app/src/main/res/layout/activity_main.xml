@@ -31,33 +31,39 @@
             <ImageView
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"/>
+                android:scaleType="fitXY"
+                android:layout_margin="5dp"/>
             <ImageView
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"/>
+                android:scaleType="fitXY"
+                android:layout_margin="5dp"/>
         </TableRow>
         <TableRow
             android:layout_weight="1">
             <ImageView
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"/>
+                android:scaleType="fitXY"
+                android:layout_margin="5dp"/>
             <ImageView
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"/>
+                android:scaleType="fitXY"
+                android:layout_margin="5dp"/>
         </TableRow>
         <TableRow
             android:layout_weight="1">
             <ImageView
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"/>
+                android:scaleType="fitXY"
+                android:layout_margin="5dp"/>
             <ImageView
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"/>
+                android:scaleType="fitXY"
+                android:layout_margin="5dp"/>
         </TableRow>
     </TableLayout>
 </LinearLayout>
