@@ -130,7 +130,7 @@ public class QuizActivity extends BaseActivity {
             JsonArray results = input.getAsJsonArray("results");
 
             //get image url
-            for (int i = 0; i < result.size(); i++) {
+            for (int i = 0; i < 6; i++) {
                 JsonElement element = results.get(i);
 
                 if (element.isJsonObject() &&

@@ -24,7 +24,7 @@
     <TableLayout
         android:id="@+id/tlImages"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
         <TableRow
             android:layout_weight="1"
             android:layout_width="match_parent">
@@ -66,4 +66,8 @@
                 android:layout_margin="5dp"/>
         </TableRow>
     </TableLayout>
+    <!--<Button-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/not_found"/>-->
 </LinearLayout>
