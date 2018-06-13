@@ -35,7 +35,8 @@ public class QuizActivity extends BaseActivity {
 
     private List<ImageView> cellsIvs = new ArrayList<>();
     private EditText etSearch;
-    private String textQuerySearch = "computer";
+//    private String textQuerySearch = "computer";
+    private String textQuerySearch = "stas";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +136,7 @@ public class QuizActivity extends BaseActivity {
             JsonArray results = input.getAsJsonArray("results");
 
             //get image url
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < results.size(); i++) {
                 JsonElement element = results.get(i);
 
                 if (element.isJsonObject() &&
