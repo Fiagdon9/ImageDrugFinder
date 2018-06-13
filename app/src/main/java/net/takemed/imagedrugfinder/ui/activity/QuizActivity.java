@@ -173,5 +173,9 @@ public class QuizActivity extends BaseActivity {
         }
     }
 
+    public void onSearchDrug(View view) {
+
+    }
+
     //[/Data code]
 }
