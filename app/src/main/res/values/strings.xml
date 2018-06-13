@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">ImageDrugFinder</string>
     <string name="have_not_enough_image_views">Have not enough image views</string>
+    <string name="not_found">Not found</string>
+    <string name="search">Find</string>
+    <string name="error_empty_query">Search query must contain not empty text!</string>
+    <string name="error_not_enought_urls">Hey man, you have not enough urls</string>
+    <string name="et_search_hint">Request</string>
+    <string name="quiz_image_views_content_description">One of the images founded for current request</string>
 </resources>
