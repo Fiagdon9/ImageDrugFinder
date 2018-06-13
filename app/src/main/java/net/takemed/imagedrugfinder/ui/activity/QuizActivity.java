@@ -5,8 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -34,33 +33,46 @@ public class QuizActivity extends BaseActivity {
 
 
     private List<ImageView> cellsIvs = new ArrayList<>();
-    private EditText etSearch;
-//    private String textQuerySearch = "computer";
-    private String textQuerySearch = "stas";
+
+    //[Controller code]
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        etSearch = findViewById(R.id.etSearch);
-
-        initIvsList();
-        loadImagesFromApi(textQuerySearch);
+        initUi();
     }
 
+    private void initUi() {
+        initIvsList();
+
+        EditText etSearch = findViewById(R.id.etSearch);
+        findViewById(R.id.btnSearch).setOnClickListener(v -> {
+            String query = etSearch.getText().toString();
+
+            if (query.isEmpty()) {
+                showLongToast(R.string.error_empty_query);
+                return;
+            }
+
+            loadImagesFromApi(query);
+        });
+    }
+
+    //[/Controller code]
 
     //[UI code]
 
     private void initIvsList() {
-        TableLayout tl = findViewById(R.id.tlImages);
+        LinearLayout ll = findViewById(R.id.llImages);
 
-        for (int i = 0; i < tl.getChildCount(); i++) {
-            View child = tl.getChildAt(i);
+        for (int i = 0; i < ll.getChildCount(); i++) {
+            View child = ll.getChildAt(i);
 
             if (child instanceof ImageView) {
                 cellsIvs.add((ImageView) child);
-            } else if (child instanceof TableRow) {
-                TableRow row = (TableRow) child;
+            } else if (child instanceof LinearLayout) {
+                LinearLayout row = (LinearLayout) child;
 
                 for (int j = 0; j < row.getChildCount(); j++) {
                     child = row.getChildAt(j);
@@ -79,7 +91,7 @@ public class QuizActivity extends BaseActivity {
                 setImage(cellsIvs.get(i), imagesUrl.get(i));
             }
         } else {
-            showToast("Hey man, you have not enough urls");
+            showToast(R.string.error_not_enought_urls);
         }
     }
 
@@ -129,7 +141,7 @@ public class QuizActivity extends BaseActivity {
      * @return list of image urls mapped from JsonObject or empty list
      */
     private List<String> mapData(JsonObject input) {
-        List<String> result = new ArrayList<>();
+        List<String> output = new ArrayList<>();
 
         if (input.has("results") &&
                 input.get("results").isJsonArray()) {
@@ -153,12 +165,12 @@ public class QuizActivity extends BaseActivity {
                             .getAsJsonObject("urls")
                             .get("small").getAsString();
 
-                    result.add(url);
+                    output.add(url);
                 }
             }
         }
 
-        return result;
+        return output;
     }
 
     /**
@@ -176,15 +188,6 @@ public class QuizActivity extends BaseActivity {
             e.printStackTrace();
             //we need to finish activity if device has no play services :c
             finish();
-        }
-    }
-
-    public void onSearchDrug(View view) {
-        if (etSearch.getText().length() == 0){
-            showLongToast("Search query it's null");
-        } else {
-            String searchQuery = etSearch.getText().toString();
-            loadImagesFromApi(searchQuery);
         }
     }
 
