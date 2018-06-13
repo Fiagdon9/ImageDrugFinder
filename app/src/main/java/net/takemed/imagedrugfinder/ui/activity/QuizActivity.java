@@ -3,6 +3,7 @@ package net.takemed.imagedrugfinder.ui.activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -33,13 +34,17 @@ public class QuizActivity extends BaseActivity {
 
 
     private List<ImageView> cellsIvs = new ArrayList<>();
+    private EditText etSearch;
+    private String textQuerySearch = "computer";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        etSearch = findViewById(R.id.etSearch);
+
         initIvsList();
-        loadImagesFromApi();
+        loadImagesFromApi(textQuerySearch);
     }
 
 
@@ -90,7 +95,7 @@ public class QuizActivity extends BaseActivity {
 
     //[Data code]
 
-    private void loadImagesFromApi() {
+    private void loadImagesFromApi(String textQuerySearch) {
         String clientId = getString(R.string.client_id);
 
         //bug in SDK 19 or less with using TLS 1.2
@@ -105,7 +110,7 @@ public class QuizActivity extends BaseActivity {
                 .create(UnsplashApi.class);
 
         unsplashApi
-                .searchPhotos(clientId, "computer")
+                .searchPhotos(clientId, textQuerySearch)
                 .enqueue(new ToastErrorCallback<>(this,
                         jo -> {
                             List<String> imagesUrl = mapData(jo);
@@ -174,7 +179,12 @@ public class QuizActivity extends BaseActivity {
     }
 
     public void onSearchDrug(View view) {
-
+        if (etSearch.getText().length() == 0){
+            showLongToast("Search query it's null");
+        } else {
+            String searchQuery = etSearch.getText().toString();
+            loadImagesFromApi(searchQuery);
+        }
     }
 
     //[/Data code]
