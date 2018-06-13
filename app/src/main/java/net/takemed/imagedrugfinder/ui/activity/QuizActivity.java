@@ -1,5 +1,6 @@
 package net.takemed.imagedrugfinder.ui.activity;
 
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +20,7 @@ import net.takemed.imagedrugfinder.R;
 import net.takemed.imagedrugfinder.data.retrofit.UnsplashApi;
 import net.takemed.imagedrugfinder.data.retrofit.callback.ToastErrorCallback;
 
+import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -130,7 +132,7 @@ public class QuizActivity extends BaseActivity {
             JsonArray results = input.getAsJsonArray("results");
 
             //get image url
-            for (int i = 0; i < result.size(); i++) {
+            for (int i = 0; i < results.size(); i++) {
                 JsonElement element = results.get(i);
 
                 if (element.isJsonObject() &&
