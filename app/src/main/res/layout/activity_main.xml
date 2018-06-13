@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <EditText
+            android:id="@+id/etSearch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
@@ -25,7 +26,8 @@
     <TableLayout
         android:id="@+id/tlImages"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
         <TableRow
             android:layout_weight="1"
             android:layout_width="match_parent">
@@ -67,8 +69,13 @@
                 android:layout_margin="5dp"/>
         </TableRow>
     </TableLayout>
-    <!--<Button-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/not_found"/>-->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:background="@color/smallRed"
+        android:textStyle="bold"
+        android:textSize="22sp"
+        android:textColor="@color/white"
+        android:text="@string/not_found"/>
 </LinearLayout>
