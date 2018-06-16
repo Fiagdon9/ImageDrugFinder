@@ -1,21 +1,23 @@
 package net.takemed.imagedrugfinder.ui.activity;
 
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.takemed.imagedrugfinder.R;
+import net.takemed.imagedrugfinder.data.NetworkClient;
 import net.takemed.imagedrugfinder.data.retrofit.GoogleCustomSearchApi;
 import net.takemed.imagedrugfinder.data.retrofit.callback.ToastErrorCallback;
 
@@ -23,16 +25,23 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
+import io.reactivex.Maybe;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class QuizActivity extends BaseActivity {
 
-
     private List<ImageView> cellsIvs = new ArrayList<>();
+    private Disposable clickSubscribe;
 
     //[Controller code]
 
@@ -47,16 +56,38 @@ public class QuizActivity extends BaseActivity {
         initIvsList();
 
         EditText etSearch = findViewById(R.id.etSearch);
-        findViewById(R.id.btnSearch).setOnClickListener(v -> {
-            String query = etSearch.getText().toString();
+        clickSubscribe = getButtonClickObservable()
+                .subscribe(it -> {
+                    Log.e("MyTag", "HEY!");
+                    String query = etSearch.getText().toString();
 
-            if (query.isEmpty()) {
-                showLongToast(R.string.error_empty_query);
-                return;
+                    if (query.isEmpty()) {
+                        showLongToast(R.string.error_empty_query);
+                        return;
+                    }
+
+                    loadImagesFromApi(query);
+                });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (clickSubscribe != null) {
+            clickSubscribe.dispose();
+        }
+    }
+
+    private Observable<View> getButtonClickObservable() {
+        return new Observable<View>() {
+            @Override
+            protected void subscribeActual(Observer<? super View> observer) {
+                findViewById(R.id.btnSearch)
+                        .setOnClickListener(observer::onNext);
             }
-
-            loadImagesFromApi(query);
-        });
+        }
+                .throttleFirst(2, TimeUnit.SECONDS);
     }
 
     //[/Controller code]
@@ -85,21 +116,18 @@ public class QuizActivity extends BaseActivity {
         }
     }
 
-    private void fillImages(List<String> imagesUrl) {
-        if (cellsIvs.size() <= imagesUrl.size()) {
+    private void fillImages(List<BitmapDrawable> images) {
+        if (cellsIvs.size() <= images.size()) {
             for (int i = 0; i < cellsIvs.size(); i++) {
-                setImage(cellsIvs.get(i), imagesUrl.get(i));
+                setImage(cellsIvs.get(i), images.get(i));
             }
         } else {
             showToast(R.string.error_not_enought_urls);
         }
     }
 
-    private void setImage(ImageView iv, String url) {
-        Glide
-                .with(getApplicationContext())
-                .load(url)
-                .into(iv);
+    private void setImage(ImageView iv, Drawable drawable) {
+        iv.setImageDrawable(drawable);
         iv.setVisibility(View.VISIBLE);
     }
 
@@ -109,13 +137,10 @@ public class QuizActivity extends BaseActivity {
     //[Data code]
 
     private void loadImagesFromApi(String textQuerySearch) {
-        String clientId = getString(R.string.client_id);
-
         //bug in SDK 19 or less with using TLS 1.2
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             makeSslGreatAgain();
         }
-
 
         GoogleCustomSearchApi googleCustomSearchApi = new Retrofit.Builder()
                 .baseUrl(GoogleCustomSearchApi.BASE_URL)
@@ -124,15 +149,11 @@ public class QuizActivity extends BaseActivity {
                 .create(GoogleCustomSearchApi.class);
 
         googleCustomSearchApi
-                .searchPhotos(textQuerySearch, 6)
+                .searchPhotos(textQuerySearch, 10)
                 .enqueue(new ToastErrorCallback<>(this,
-                        jo -> {
-                            List<String> imagesUrl = mapData(jo);
-                            fillImages(imagesUrl);
-                        },
-                        getString(R.string.have_not_enough_image_views)));
-
-
+                        jo -> mapData(jo)
+                                .subscribe(this::fillImages),
+                        getString(R.string.error_when_works_with_net)));
     }
 
 
@@ -143,22 +164,33 @@ public class QuizActivity extends BaseActivity {
      * @param input - input JsonObject that contain all urls for images
      * @return list of image urls mapped from JsonObject or empty list
      */
-    private List<String> mapData(JsonObject input) {
-        List<String> output = new ArrayList<>();
-        if (input.has("items") &&
-                input.get("items").isJsonArray()){
-            JsonArray items = input.getAsJsonArray("items");
-            for (int i = 0; i < items.size(); i++) {
-                JsonElement element = items.get(i);
-                if (element.isJsonObject() &&
-                        element.getAsJsonObject().has("link")) {
-                    output.add(element.getAsJsonObject().get("link")
-                            .getAsString());
-                }
-            }
-        }
-
-        return output;
+    private Observable<List<BitmapDrawable>> mapData(JsonObject input) {
+        return Observable
+                .just(input)                                    //создаем поток данных из одного элемента input
+                .filter(it -> it.has("items"))     //убираем из этого потока все элементы не содержащие внутри себя элемент "items"
+                .map(it -> it.get("items"))                     //превращаем поток JsonObject в поток JsonElement(он один)
+                .filter(JsonElement::isJsonArray)               //убираем из потока все JsonElement, которые не являются JsonArray
+                .map(JsonElement::getAsJsonArray)               //превращаем поток JsonElement в JsonArray
+                .flatMap(Observable::fromIterable)              //превращаем поток JsonArray в поток JsonElement(которых много)
+                .filter(JsonElement::isJsonObject)              //убираем все JsonElement, которые не являются JsonObject
+                .map(JsonElement::getAsJsonObject)
+                .filter(it -> it.has("image"))
+                .map(it -> it.get("image"))
+                .filter(JsonElement::isJsonObject)
+                .map(JsonElement::getAsJsonObject)
+                .filter(it -> it.has("thumbnailLink"))
+                .map(it -> it.get("thumbnailLink"))
+                .map(JsonElement::getAsString)
+                .flatMap(it -> Observable.defer(() ->
+                        NetworkClient.getInstance().loadImage(it)))
+                .filter(it -> !it.isEmpty()
+                        .blockingGet())
+                .map(Maybe::blockingGet)
+                .map(BitmapDrawable::new)
+                .buffer(6)
+                .take(1)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
