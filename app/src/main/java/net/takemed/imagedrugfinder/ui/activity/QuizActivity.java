@@ -1,6 +1,5 @@
 package net.takemed.imagedrugfinder.ui.activity;
 
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -17,10 +16,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.takemed.imagedrugfinder.R;
-import net.takemed.imagedrugfinder.data.retrofit.UnsplashApi;
+import net.takemed.imagedrugfinder.data.retrofit.GoogleCustomSearchApi;
 import net.takemed.imagedrugfinder.data.retrofit.callback.ToastErrorCallback;
 
-import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -118,20 +116,23 @@ public class QuizActivity extends BaseActivity {
             makeSslGreatAgain();
         }
 
-        UnsplashApi unsplashApi = new Retrofit.Builder()
-                .baseUrl(UnsplashApi.BASE_URL)
+
+        GoogleCustomSearchApi googleCustomSearchApi = new Retrofit.Builder()
+                .baseUrl(GoogleCustomSearchApi.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-                .create(UnsplashApi.class);
+                .create(GoogleCustomSearchApi.class);
 
-        unsplashApi
-                .searchPhotos(clientId, textQuerySearch)
+        googleCustomSearchApi
+                .searchPhotos(textQuerySearch, 6)
                 .enqueue(new ToastErrorCallback<>(this,
                         jo -> {
                             List<String> imagesUrl = mapData(jo);
                             fillImages(imagesUrl);
                         },
                         getString(R.string.have_not_enough_image_views)));
+
+
     }
 
 
@@ -144,30 +145,15 @@ public class QuizActivity extends BaseActivity {
      */
     private List<String> mapData(JsonObject input) {
         List<String> output = new ArrayList<>();
-
-        if (input.has("results") &&
-                input.get("results").isJsonArray()) {
-            JsonArray results = input.getAsJsonArray("results");
-
-            //get image url
-            for (int i = 0; i < results.size(); i++) {
-                JsonElement element = results.get(i);
-
+        if (input.has("items") &&
+                input.get("items").isJsonArray()){
+            JsonArray items = input.getAsJsonArray("items");
+            for (int i = 0; i < items.size(); i++) {
+                JsonElement element = items.get(i);
                 if (element.isJsonObject() &&
-                        element.getAsJsonObject()
-                                .has("urls") &&
-                        element.getAsJsonObject()
-                                .get("urls").isJsonObject() &&
-                        element.getAsJsonObject()
-                                .get("urls").getAsJsonObject()
-                                .has("small")) {
-
-                    String url = element
-                            .getAsJsonObject()
-                            .getAsJsonObject("urls")
-                            .get("small").getAsString();
-
-                    output.add(url);
+                        element.getAsJsonObject().has("link")) {
+                    output.add(element.getAsJsonObject().get("link")
+                            .getAsString());
                 }
             }
         }
