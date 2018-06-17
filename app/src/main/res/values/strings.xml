@@ -12,6 +12,6 @@
     <string name="first_quot">\"Жизнь — это либо отчаянное приключение, либо ничего\"</string>
     <string name="btn_start">Старт</string>
     <string name="tv_progress">ПРОГРЕСС</string>
-    <string name="tv_average_time">Среднее время:</string>
-    <string name="tv_progress_num">3000/30000</string>
+    <string name="tv_average_time">Среднее время: %d мс</string>
+    <string name="tv_progress_num">%d/%d</string>
 </resources>

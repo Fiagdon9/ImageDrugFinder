@@ -1,10 +1,11 @@
 package net.takemed.imagedrugfinder.ui.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,8 +41,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class QuizActivity extends BaseActivity {
 
+    public static final String EXTRA_QUERY = "EXTRA_QUERY";
+    private EditText etSearch;
+
+
     private List<ImageView> cellsIvs = new ArrayList<>();
     private Disposable clickSubscribe;
+
+    public static Intent getIntent(Context context, String query) {
+        Intent intent = new Intent(context, QuizActivity.class);
+        intent.putExtra(EXTRA_QUERY, query);
+
+        return intent;
+    }
 
     //[Controller code]
 
@@ -50,15 +62,15 @@ public class QuizActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUi();
+        initData();
     }
 
     private void initUi() {
         initIvsList();
 
-        EditText etSearch = findViewById(R.id.etSearch);
+        etSearch = findViewById(R.id.etSearch);
         clickSubscribe = getButtonClickObservable()
                 .subscribe(it -> {
-                    Log.e("MyTag", "HEY!");
                     String query = etSearch.getText().toString();
 
                     if (query.isEmpty()) {
@@ -135,6 +147,13 @@ public class QuizActivity extends BaseActivity {
 
 
     //[Data code]
+
+    private void initData() {
+        Intent intent = getIntent();
+        String query = intent.getStringExtra(EXTRA_QUERY);
+        etSearch.setText(query);
+        findViewById(R.id.btnSearch).performClick();
+    }
 
     private void loadImagesFromApi(String textQuerySearch) {
         //bug in SDK 19 or less with using TLS 1.2
