@@ -19,7 +19,7 @@ public class StartActivity extends AppCompatActivity {
         ProgressBar pb = findViewById(R.id.progressBarImages);
         TextView tvAverageTime = findViewById(R.id.tvAverageTime);
 
-        tvAverageTime.append(" " + 30+"мс");
+        tvAverageTime.append(" " + 30 + "мс");
 
         // TextView with ProgressBar data
         ((TextView) findViewById(R.id.tvProgressNum))
