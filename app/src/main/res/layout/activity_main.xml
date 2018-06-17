@@ -24,8 +24,8 @@
             android:id="@+id/btnSearch"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@color/lightSeaGreen"
             android:text="@string/search"
+            android:background="@color/lightSeaGreen"
             android:textColor="@color/white"
             android:textStyle="bold" />
 
