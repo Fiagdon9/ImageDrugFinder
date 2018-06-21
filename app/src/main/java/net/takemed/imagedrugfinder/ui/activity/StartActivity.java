@@ -33,6 +33,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+// bla bla bla
+
 public class StartActivity extends AppCompatActivity {
 
     private ForismaticQuoteApi forismaticQuoteApi;;
