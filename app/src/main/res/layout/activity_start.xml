@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:maxWidth="300dp"
             android:layout_marginTop="16dp"
-            android:minLines="2"
+            android:maxLines="3"
             android:text="@string/first_quot"
             android:textAlignment="center"
             android:textSize="18sp" />

@@ -168,7 +168,7 @@ public class QuizActivity extends BaseActivity {
                 .create(GoogleCustomSearchApi.class);
 
         googleCustomSearchApi
-                .searchPhotos(textQuerySearch, 10)
+                .searchPhotos(textQuerySearch, 10, getString(R.string.google_key))
                 .enqueue(new ToastErrorCallback<>(this,
                         jo -> mapData(jo)
                                 .subscribe(this::fillImages),
