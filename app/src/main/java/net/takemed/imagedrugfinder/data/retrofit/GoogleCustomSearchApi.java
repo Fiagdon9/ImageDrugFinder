@@ -2,8 +2,6 @@ package net.takemed.imagedrugfinder.data.retrofit;
 
 import com.google.gson.JsonObject;
 
-import net.takemed.imagedrugfinder.R;
-
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

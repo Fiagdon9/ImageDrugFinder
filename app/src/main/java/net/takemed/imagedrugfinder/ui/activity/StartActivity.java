@@ -1,5 +1,6 @@
 package net.takemed.imagedrugfinder.ui.activity;
 
+
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -33,8 +34,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-// bla bla bla bla
-
 public class StartActivity extends AppCompatActivity {
 
     private ForismaticQuoteApi forismaticQuoteApi;
@@ -64,7 +63,6 @@ public class StartActivity extends AppCompatActivity {
 
 
     private void setData() {
-        //вапроапро
         ProgressBar pb = findViewById(R.id.progressBarImages);
         TextView tvAverageTime = findViewById(R.id.tvAverageTime);
         TextView progressNum = findViewById(R.id.tvProgressNum);
@@ -138,6 +136,4 @@ public class StartActivity extends AppCompatActivity {
     private class QuoteLengthException extends RuntimeException{
 
     }
-
-
 }

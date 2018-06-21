@@ -9,7 +9,7 @@
     <string name="et_search_hint">Request</string>
     <string name="quiz_image_views_content_description">One of the images founded for current request</string>
     <string name="idf_logo">IDF</string>
-    <string name="first_quot">\"Подлинная тайна жизни заключается в зримом, а не в сокровенном.\"</string>
+    <string name="first_quot">\"Жизнь — это либо отчаянное приключение, либо ничего\"</string>
     <string name="btn_start">Старт</string>
     <string name="tv_progress">ПРОГРЕСС</string>
     <string name="tv_average_time">Среднее время: %d мс</string>
