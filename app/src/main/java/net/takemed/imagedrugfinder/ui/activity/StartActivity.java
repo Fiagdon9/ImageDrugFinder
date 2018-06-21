@@ -37,7 +37,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class StartActivity extends AppCompatActivity {
 
-    private ForismaticQuoteApi forismaticQuoteApi;;
+    private ForismaticQuoteApi forismaticQuoteApi;
     private TextView tq;
 
     @Override
@@ -64,7 +64,7 @@ public class StartActivity extends AppCompatActivity {
 
 
     private void setData() {
-        //вапро
+        //вапроапро
         ProgressBar pb = findViewById(R.id.progressBarImages);
         TextView tvAverageTime = findViewById(R.id.tvAverageTime);
         TextView progressNum = findViewById(R.id.tvProgressNum);
@@ -135,7 +135,7 @@ public class StartActivity extends AppCompatActivity {
         }
     }
 
-    class QuoteLengthException extends RuntimeException{
+    private class QuoteLengthException extends RuntimeException{
 
     }
 
