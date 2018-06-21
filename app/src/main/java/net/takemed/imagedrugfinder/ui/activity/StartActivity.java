@@ -64,6 +64,7 @@ public class StartActivity extends AppCompatActivity {
 
 
     private void setData() {
+        //вапро
         ProgressBar pb = findViewById(R.id.progressBarImages);
         TextView tvAverageTime = findViewById(R.id.tvAverageTime);
         TextView progressNum = findViewById(R.id.tvProgressNum);
